@@ -1,0 +1,12 @@
+---
+file:
+  filename: dir.conf
+  content: |
+    <IfModule mod_dir.c>
+    DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+    </IfModule>
+  permissions: '755'
+  location: /etc/apache2/mods-enabled/
+  notifyOnUpdate:
+  - apache2
+

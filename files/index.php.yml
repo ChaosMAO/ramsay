@@ -1,0 +1,6 @@
+---
+file:
+  filename: index.php
+  content: '<?php header("Content-Type: text/plain");echo "Hello, world!\n" ?>'
+  permissions: '755'
+  location: /var/www/html

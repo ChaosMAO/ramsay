@@ -41,5 +41,5 @@ end
 
 # Function to check if a package is installed
 def check_package(package)
-	is_package_installed = `dpkg -s "#{package}"`
+	is_package_installed = `dpkg -l | grep "#{package}"`
 end

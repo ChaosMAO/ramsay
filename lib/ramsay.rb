@@ -75,12 +75,17 @@ class Ramsay
         notify = true
       end
 
+      if(package_status.include? 'started')
+        start_service(package_name)
+        notify = true
+      end
+
       if (to_notify != nil && notify == true)
         to_notify.each do |service|
           restart_service(service)
         end
       else
-        puts "No actions taken, nothing to restart."
+        #puts "No actions taken, nothing to restart."
       end
     end
   end
