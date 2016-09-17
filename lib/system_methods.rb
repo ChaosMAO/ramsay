@@ -10,7 +10,6 @@ end
 # Function to write desired content to a file
 def write_file_content(file, content)
   File.open("#{file}","w") do |f|
-  	puts file
     f.write("#{content}")
     f.close()
   end
@@ -18,7 +17,6 @@ end
 
 # Function to restart a service
 def restart_service(service)
-	puts "I am restarting"
 	`sudo service #{service} restart`
 end
 
@@ -38,7 +36,7 @@ end
 
 # Function to enable a service at boot
 def enable_service(package)
-
+	`sysv-rc-conf "#{package}" on` 
 end
 
 # Function to check if a package is installed

@@ -1,6 +1,5 @@
 require 'logger'
 require_relative 'system_methods.rb'
-require 'highline/import'
 
 class Ramsay
 	@@files_folder = "/opt/ramsay/files/"
@@ -18,7 +17,6 @@ class Ramsay
       file_full_name = "#{file_location}/#{file_name}"
       notify = false
 
-    puts file_full_name
       if (!File.file?(file_full_name))
         write_file_content(file_full_name, file_content)
         assign_permissions(file_permissions, file_full_name)
@@ -54,32 +52,35 @@ class Ramsay
       package_name = package_config['package']
       package_status = package_config['status']
       to_notify = package_config['notifyOnUpdatey']
+      notify = false
 
-      case package_status
-        when 'started'
+      if(!package_status.include? 'removed')
         if(check_package(package_name) == '')
-          puts "Installing"
           install_package(package_name)
+          notify = true
         else
-          puts "Starting"
-          start_service(package_name)
+          puts "Package already installed"
         end
-
-        when 'enabled'
-          if(check_package(package_name) == '')
-            puts "Installing"
-            install_package(package_name)
-          else
-            puts "Enabling at boot"
-            enable_service(package_name)
-          end
-      
-        when 'removed'
-          if(check_package(package_name) == '')
-          puts "Package is not installed"
-        else
+      else
+        if(check_package(package_name) != '')
           remove_package(package_name)
+          notify = true
+        else
+          #puts ""
         end
+      end
+
+      if(package_status.include? 'enabled')
+        enable_service(package_name)
+        notify = true
+      end
+
+      if (to_notify != nil && notify == true)
+        to_notify.each do |service|
+          restart_service(service)
+        end
+      else
+        puts "No actions taken, nothing to restart."
       end
     end
   end
