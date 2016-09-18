@@ -70,5 +70,5 @@ $ sudo ramsay run
 ```
 The run command, will read all the configuration files and create files, install packages, restart services, based on the desired state. If no changes are made to the config files, no actions are taken on the system. **Logs of executions can be found in /var/www/ramsay.log.**
 
-   [bootstrap]: <https://s3-eu-west-1.amazonaws.com/andrea-share1/bootstrap.sh>
+   [bootstrap.sh]: <https://s3-eu-west-1.amazonaws.com/andrea-share1/bootstrap.sh>
    
