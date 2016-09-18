@@ -12,7 +12,7 @@ To install gems on your system please use:
 ```sh
 $ gem install trollop logger
 ```
-A script to install the requirements can be found here: bootstrap.sh.
+A script to install the requirements can be found here: [bootstrap.sh](https://s3-eu-west-1.amazonaws.com/andrea-share1/bootstrap.sh).
 
 ## Installation
 Make sure to have Ruby with the requirements above installed on your system.
@@ -68,7 +68,4 @@ notifyOnUpdate: []
 ```sh
 $ sudo ramsay run
 ```
-The run command, will read all the configuration files and create files, install packages, restart services, based on the desired state. If no changes are made to the config files, no actions are taken on the system. **Logs of executions can be found in /var/www/ramsay.log.**
-
-   [bootstrap.sh]: <https://s3-eu-west-1.amazonaws.com/andrea-share1/bootstrap.sh>
-   
+The run command, will read all the configuration files and create files, install packages, restart services, based on the desired state. If no changes are made to the config files, no actions are taken on the system. **Logs of executions can be found in /var/www/ramsay.log.**  
