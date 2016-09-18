@@ -9,50 +9,6 @@ class Ramsay
   def run
     logger = Logger.new(@@log_file)
     logger.info("ramsay run started.")
-    Dir.glob("#{@@files_folder}*.yml", File::FNM_DOTMATCH) do |file|
-      file_config = YAML.load_file(file)
-      file_name = file_config['file']['filename']
-      file_content = file_config['file']['content']
-      file_location = file_config['file']['location']
-      file_permissions = file_config['file']['permissions']
-      to_notify = file_config['file']['notifyOnUpdate']
-      file_full_name = "#{file_location}/#{file_name}"
-      notify = false
-
-      if (!File.file?(file_full_name))
-        logger.info("File #{file_full_name} doesn't exits. Creating.")
-        write_file_content(file_full_name, file_content)
-        assign_permissions(file_permissions, file_full_name)
-        notify = true
-      else
-        logger.info("File #{file_full_name} exists. Checking its content.")
-        current_file_content = File.read(file_full_name)
-        if (current_file_content == file_content)
-          notify = false
-          logger.info("File #{file_full_name} exists and its content is unchanged.")
-        else
-          write_file_content(file_full_name, file_content)
-          notify = true
-          logger.info("File #{file_full_name} exists but content is updated.")
-        end
-
-        current_file_permissions = get_current_permissions(file_full_name)
-        if (current_file_permissions.to_i != file_permissions.to_i)
-          assign_permissions(file_permissions, file_full_name)
-          notify = true
-          logger.info("File #{file_full_name} permissions changed.")
-        else  
-          logger.info("File #{file_full_name} permissions unchanged.")
-        end
-      end
-      
-      if (to_notify != nil && notify == true)
-        to_notify.each do |service|
-          restart_service(service)
-          logger.info("#{service} restarted")
-        end
-      end
-    end
 
     Dir.glob("#{@@packages_folder}*.yml") do |file|
       package_config = YAML.load_file(file)
@@ -98,6 +54,51 @@ class Ramsay
         end
       else
           logger.info("No services restarted.")
+      end
+    end
+    
+    Dir.glob("#{@@files_folder}*.yml", File::FNM_DOTMATCH) do |file|
+      file_config = YAML.load_file(file)
+      file_name = file_config['file']['filename']
+      file_content = file_config['file']['content']
+      file_location = file_config['file']['location']
+      file_permissions = file_config['file']['permissions']
+      to_notify = file_config['file']['notifyOnUpdate']
+      file_full_name = "#{file_location}/#{file_name}"
+      notify = false
+
+      if (!File.file?(file_full_name))
+        logger.info("File #{file_full_name} doesn't exits. Creating.")
+        write_file_content(file_full_name, file_content)
+        assign_permissions(file_permissions, file_full_name)
+        notify = true
+      else
+        logger.info("File #{file_full_name} exists. Checking its content.")
+        current_file_content = File.read(file_full_name)
+        if (current_file_content == file_content)
+          notify = false
+          logger.info("File #{file_full_name} exists and its content is unchanged.")
+        else
+          write_file_content(file_full_name, file_content)
+          notify = true
+          logger.info("File #{file_full_name} exists but content is updated.")
+        end
+
+        current_file_permissions = get_current_permissions(file_full_name)
+        if (current_file_permissions.to_i != file_permissions.to_i)
+          assign_permissions(file_permissions, file_full_name)
+          notify = true
+          logger.info("File #{file_full_name} permissions changed.")
+        else  
+          logger.info("File #{file_full_name} permissions unchanged.")
+        end
+      end
+      
+      if (to_notify != nil && notify == true)
+        to_notify.each do |service|
+          restart_service(service)
+          logger.info("#{service} restarted")
+        end
       end
     end
   end

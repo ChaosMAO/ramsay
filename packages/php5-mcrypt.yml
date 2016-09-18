@@ -1,5 +1,4 @@
 ---
 package: php5-mcrypt
-status:
-- started
+status: []
 to_notify: []

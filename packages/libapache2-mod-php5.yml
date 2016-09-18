@@ -1,5 +1,4 @@
 ---
 package: libapache2-mod-php5
-status:
-- started
+status: []
 to_notify: []
