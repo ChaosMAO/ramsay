@@ -10,6 +10,7 @@ class Ramsay
     logger = Logger.new(@@log_file)
     logger.info("ramsay run started.")
 
+    # Iterate through the package config folder to get the files and put the system in the desired status.
     Dir.glob("#{@@packages_folder}*.yml") do |file|
       package_config = YAML.load_file(file)
       package_name = package_config['package']
@@ -57,6 +58,7 @@ class Ramsay
       end
     end
     
+    # Iterate through the files config folder to create/update the files as desired.
     Dir.glob("#{@@files_folder}*.yml", File::FNM_DOTMATCH) do |file|
       file_config = YAML.load_file(file)
       file_name = file_config['file']['filename']
@@ -103,7 +105,7 @@ class Ramsay
     end
   end
 
-  # Method to create a new file
+  # Method to create a new file config
 	def file_config(opts)
     logger = Logger.new(@@log_file)
     file_content = Hash.new
@@ -131,6 +133,7 @@ class Ramsay
 
   end
 
+  # Method to create a new package config
   def package_config(opts)
     logger = Logger.new(@@log_file)
     file_content = Hash.new
