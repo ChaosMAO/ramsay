@@ -7,6 +7,8 @@ class Ramsay
 	@@log_file = "/var/log/ramsay.log"
   
   def run
+    logger = Logger.new(@@log_file)
+    logger.info("ramsay run started.")
     Dir.glob("#{@@files_folder}*.yml", File::FNM_DOTMATCH) do |file|
       file_config = YAML.load_file(file)
       file_name = file_config['file']['filename']
@@ -18,31 +20,36 @@ class Ramsay
       notify = false
 
       if (!File.file?(file_full_name))
+        logger.info("File #{file_full_name} doesn't exits. Creating.")
         write_file_content(file_full_name, file_content)
         assign_permissions(file_permissions, file_full_name)
         notify = true
       else
+        logger.info("File #{file_full_name} exists. Checking its content.")
         current_file_content = File.read(file_full_name)
         if (current_file_content == file_content)
           notify = false
-          #puts "File content is the same, not changed."
+          logger.info("File #{file_full_name} exists and its content is unchanged.")
         else
           write_file_content(file_full_name, file_content)
           notify = true
+          logger.info("File #{file_full_name} exists but content is updated.")
         end
 
         current_file_permissions = get_current_permissions(file_full_name)
         if (current_file_permissions.to_i != file_permissions.to_i)
           assign_permissions(file_permissions, file_full_name)
           notify = true
-        else
-          #puts "File permissions not changed"
+          logger.info("File #{file_full_name} permissions changed.")
+        else  
+          logger.info("File #{file_full_name} permissions unchanged.")
         end
       end
       
       if (to_notify != nil && notify == true)
         to_notify.each do |service|
           restart_service(service)
+          logger.info("#{service} restarted")
         end
       end
     end
@@ -58,40 +65,46 @@ class Ramsay
         if(check_package(package_name) == '')
           install_package(package_name)
           notify = true
+          logger.info("Package #{package_name} installed.")
         else
-          puts "Package already installed"
+          logger.warn("Package #{package_name} installed.")
         end
       else
         if(check_package(package_name) != '')
           remove_package(package_name)
+          logger.info("Package #{package_name} removed.")
           notify = true
         else
-          #puts ""
+          logger.warn("Package #{package_name} not installed, cannot be removed.")
         end
       end
 
       if(package_status.include? 'enabled')
         enable_service(package_name)
+        logger.info("Package #{package_name} enabled at startup.")
         notify = true
       end
 
       if(package_status.include? 'started')
         start_service(package_name)
+        logger.info("Package #{package_name} started.")
         notify = true
       end
 
       if (to_notify != nil && notify == true)
         to_notify.each do |service|
           restart_service(service)
+          logger.info("Service #{service} restarted.")
         end
       else
-        #puts "No actions taken, nothing to restart."
+          logger.info("No services restarted.")
       end
     end
   end
 
   # Method to create a new file
 	def file_config(opts)
+    logger = Logger.new(@@log_file)
     file_content = Hash.new
     to_notify = opts[:notifyOnUpdate].split(',')
 
@@ -104,19 +117,21 @@ class Ramsay
     }
 
     if (!File.file?("#{@@files_folder}#{opts[:name]}.yml"))
-      puts "New file #{opts[:name]} will be created."         
+      puts "New file #{opts[:name]} will be created."
     else 
       puts "The file #{opts[:name]}, you tried to create already exists and it will be updated with your config."
     end
 
     File.open("#{@@files_folder}#{opts[:name]}.yml","w") do |f|
       f.write(file_content.to_yaml)
+      logger.info("Config file #{opts[:name]} updated.")       
       f.close()
     end
 
   end
 
   def package_config(opts)
+    logger = Logger.new(@@log_file)
     file_content = Hash.new
     desired_status = opts[:status].split(',')
     to_notify = opts[:notifyOnUpdate].split(',')
@@ -134,6 +149,7 @@ class Ramsay
     
     File.open("#{@@packages_folder}#{opts[:package]}.yml","w") do |f|
       f.write(file_content.to_yaml)
+      logger.info("Config package #{opts[:package]} updated.")       
       f.close()
     end       
   end
