@@ -2,4 +2,4 @@
 package: apache2
 status:
 - started
-to_notify: []
+notifyOnUpdate: []
