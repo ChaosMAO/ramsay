@@ -1,6 +1,6 @@
 # Ramsay
-
-Ramsay is a simple configuration management tool that provides a command line utility to create config files. The name Ramsay comes from the fact that if this was a Chef, I wanted it to be fully functional!
+## This a simple exercise tool
+Ramsay is a simple configuration management tool that provides a command line utility to create config files. 
 
 ## Requirements
 Ramsay is written in Ruby and it has been tested with Ruby 1.9.3 and 2.2.5. The only requirements are two gems:
